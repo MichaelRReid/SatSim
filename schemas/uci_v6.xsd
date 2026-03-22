@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:uci="urn:uci:messages:v6.0"
+           targetNamespace="urn:uci:messages:v6.0"
+           elementFormDefault="qualified">
+
+  <!-- ============================================================ -->
+  <!-- Simple Type Enumerations                                      -->
+  <!-- ============================================================ -->
+
+  <xs:simpleType name="PriorityType">
+    <xs:annotation><xs:documentation>UCI message priority level</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ROUTINE"/>
+      <xs:enumeration value="PRIORITY"/>
+      <xs:enumeration value="IMMEDIATE"/>
+      <xs:enumeration value="FLASH"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="UUIDType">
+    <xs:annotation><xs:documentation>UUID v4 format identifier</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="UTCDateTimeType">
+    <xs:annotation><xs:documentation>ISO 8601 UTC timestamp ending with Z</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CommandStateType">
+    <xs:annotation><xs:documentation>Command state for capability commands</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CHANGE_SETTING"/>
+      <xs:enumeration value="QUERY"/>
+      <xs:enumeration value="ABORT"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SensorModeType">
+    <xs:annotation><xs:documentation>EO/IR sensor operating mode</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VISIBLE"/>
+      <xs:enumeration value="INFRARED_SHORT_WAVE"/>
+      <xs:enumeration value="INFRARED_LONG_WAVE"/>
+      <xs:enumeration value="MULTISPECTRAL"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="GainModeType">
+    <xs:annotation><xs:documentation>Sensor gain mode setting</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LOW"/>
+      <xs:enumeration value="MEDIUM"/>
+      <xs:enumeration value="HIGH"/>
+      <xs:enumeration value="AUTO"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PowerStateType">
+    <xs:annotation><xs:documentation>Service power state</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ON"/>
+      <xs:enumeration value="OFF"/>
+      <xs:enumeration value="STANDBY"/>
+      <xs:enumeration value="SAFE_MODE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CalibrationModeType">
+    <xs:annotation><xs:documentation>Sensor calibration mode</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DARK"/>
+      <xs:enumeration value="FLAT_FIELD"/>
+      <xs:enumeration value="RADIOMETRIC"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ImageryStatusType">
+    <xs:annotation><xs:documentation>Status of an imagery collection</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="COMPLETED"/>
+      <xs:enumeration value="FAILED"/>
+      <xs:enumeration value="ABORTED"/>
+      <xs:enumeration value="IN_PROGRESS"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CompletionCodeType">
+    <xs:annotation><xs:documentation>Reason code for imagery completion</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SUCCESS"/>
+      <xs:enumeration value="SENSOR_FAULT"/>
+      <xs:enumeration value="POINTING_ERROR"/>
+      <xs:enumeration value="CLOUD_COVER_EXCEEDED"/>
+      <xs:enumeration value="TIMEOUT"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NIIRSType">
+    <xs:annotation><xs:documentation>National Imagery Interpretability Rating Scale</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NIIRS_1"/>
+      <xs:enumeration value="NIIRS_2"/>
+      <xs:enumeration value="NIIRS_3"/>
+      <xs:enumeration value="NIIRS_4"/>
+      <xs:enumeration value="NIIRS_5"/>
+      <xs:enumeration value="NIIRS_6"/>
+      <xs:enumeration value="NIIRS_7"/>
+      <xs:enumeration value="NIIRS_8"/>
+      <xs:enumeration value="NIIRS_9"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OperationalStateType">
+    <xs:annotation><xs:documentation>Service operational state</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NOMINAL"/>
+      <xs:enumeration value="DEGRADED"/>
+      <xs:enumeration value="FAULT"/>
+      <xs:enumeration value="OFFLINE"/>
+      <xs:enumeration value="CALIBRATING"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PointingModeType">
+    <xs:annotation><xs:documentation>GNC pointing mode</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NADIR"/>
+      <xs:enumeration value="INERTIAL"/>
+      <xs:enumeration value="TARGET_TRACK"/>
+      <xs:enumeration value="SUN_POINT"/>
+      <xs:enumeration value="SAFE_HOLD"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PowerModeType">
+    <xs:annotation><xs:documentation>EPS power mode</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NOMINAL"/>
+      <xs:enumeration value="ECLIPSE"/>
+      <xs:enumeration value="DEGRADED"/>
+      <xs:enumeration value="EMERGENCY_LOAD_SHED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ThermalModeType">
+    <xs:annotation><xs:documentation>Thermal subsystem mode</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NOMINAL"/>
+      <xs:enumeration value="HEATER_ACTIVE"/>
+      <xs:enumeration value="OVER_TEMP_WARNING"/>
+      <xs:enumeration value="OVER_TEMP_CRITICAL"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FaultSeverityType">
+    <xs:annotation><xs:documentation>Severity level for fault reports</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="INFO"/>
+      <xs:enumeration value="WARNING"/>
+      <xs:enumeration value="ERROR"/>
+      <xs:enumeration value="CRITICAL"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ServiceStateType">
+    <xs:annotation><xs:documentation>Service heartbeat state</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NOMINAL"/>
+      <xs:enumeration value="DEGRADED"/>
+      <xs:enumeration value="FAULT"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PlanStateType">
+    <xs:annotation><xs:documentation>Mission plan execution state</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EXECUTING"/>
+      <xs:enumeration value="COMPLETED"/>
+      <xs:enumeration value="ABORTED"/>
+      <xs:enumeration value="WAITING"/>
+      <xs:enumeration value="FAULT_HOLD"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TargetClassType">
+    <xs:annotation><xs:documentation>ATR target classification</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VEHICLE"/>
+      <xs:enumeration value="BUILDING"/>
+      <xs:enumeration value="VESSEL"/>
+      <xs:enumeration value="AIRCRAFT"/>
+      <xs:enumeration value="UNKNOWN"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LatitudeType">
+    <xs:annotation><xs:documentation>WGS84 latitude in degrees [-90, 90]</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:double">
+      <xs:minInclusive value="-90"/>
+      <xs:maxInclusive value="90"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LongitudeType">
+    <xs:annotation><xs:documentation>WGS84 longitude in degrees [-180, 180]</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:double">
+      <xs:minInclusive value="-180"/>
+      <xs:maxInclusive value="180"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PercentageType">
+    <xs:annotation><xs:documentation>Percentage value 0-100</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:float">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ============================================================ -->
+  <!-- Complex Types                                                  -->
+  <!-- ============================================================ -->
+
+  <xs:complexType name="HeaderType">
+    <xs:annotation><xs:documentation>Mandatory UCI message header present on every message</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="MessageID" type="uci:UUIDType">
+        <xs:annotation><xs:documentation>Unique message identifier (UUID v4)</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Timestamp" type="uci:UTCDateTimeType">
+        <xs:annotation><xs:documentation>Message creation timestamp in ISO 8601 UTC</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="SenderID" type="xs:string">
+        <xs:annotation><xs:documentation>Registered service identifier of the message sender</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Version" type="xs:string">
+        <xs:annotation><xs:documentation>UCI protocol version string</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Priority" type="uci:PriorityType">
+        <xs:annotation><xs:documentation>Message priority level</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PointTargetType">
+    <xs:annotation><xs:documentation>Geographic point target in WGS84 coordinates</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="Latitude" type="uci:LatitudeType">
+        <xs:annotation><xs:documentation>WGS84 geodetic latitude in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Longitude" type="uci:LongitudeType">
+        <xs:annotation><xs:documentation>WGS84 geodetic longitude in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Altitude_m" type="xs:float">
+        <xs:annotation><xs:documentation>Altitude in meters above WGS84 ellipsoid</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="CoordSystem" type="xs:string" fixed="WGS84">
+        <xs:annotation><xs:documentation>Coordinate reference system (always WGS84)</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TargetPointingVectorType">
+    <xs:annotation><xs:documentation>Target pointing direction for slew commands</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="Azimuth_deg" type="xs:double">
+        <xs:annotation><xs:documentation>Azimuth angle in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Elevation_deg" type="xs:double">
+        <xs:annotation><xs:documentation>Elevation angle in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Stabilization_ms" type="xs:int">
+        <xs:annotation><xs:documentation>Required stabilization time in milliseconds</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ImageMetadataType">
+    <xs:annotation><xs:documentation>Metadata for a collected image product</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="FileLocation" type="xs:string">
+        <xs:annotation><xs:documentation>Storage location of the image file</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="FileFormat" type="xs:string" fixed="NITF_2.1">
+        <xs:annotation><xs:documentation>Image file format (always NITF_2.1)</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="CloudCoverPercentage" type="uci:PercentageType">
+        <xs:annotation><xs:documentation>Estimated cloud cover percentage (0-100)</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="QualityRating" type="uci:NIIRSType">
+        <xs:annotation><xs:documentation>NIIRS quality rating of the image</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="GSD_m" type="xs:float">
+        <xs:annotation><xs:documentation>Ground sample distance in meters</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="CollectionStartTime" type="uci:UTCDateTimeType">
+        <xs:annotation><xs:documentation>Start time of image collection</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="CollectionEndTime" type="uci:UTCDateTimeType">
+        <xs:annotation><xs:documentation>End time of image collection</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PlanStepType">
+    <xs:annotation><xs:documentation>A single step within a mission plan</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="StepNumber" type="xs:int">
+        <xs:annotation><xs:documentation>Ordinal step number within the plan</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="CommandRef" type="xs:string">
+        <xs:annotation><xs:documentation>Reference to the UCI command message XML for this step</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="ExecutionOffset_sec" type="xs:int">
+        <xs:annotation><xs:documentation>Delay in seconds from plan start or previous step</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="ContinueOnFault" type="xs:boolean">
+        <xs:annotation><xs:documentation>Whether to continue plan execution if this step faults</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CollectionGeometryType">
+    <xs:annotation><xs:documentation>Geometry parameters of the image collection</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="OffNadirAngle_deg" type="xs:float">
+        <xs:annotation><xs:documentation>Off-nadir viewing angle in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="SunElevation_deg" type="xs:float">
+        <xs:annotation><xs:documentation>Sun elevation angle in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GroundCoverBoundsType">
+    <xs:annotation><xs:documentation>Geographic bounding box of the image footprint</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="NorthLat" type="xs:double">
+        <xs:annotation><xs:documentation>Northern latitude bound in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="SouthLat" type="xs:double">
+        <xs:annotation><xs:documentation>Southern latitude bound in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="EastLon" type="xs:double">
+        <xs:annotation><xs:documentation>Eastern longitude bound in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="WestLon" type="xs:double">
+        <xs:annotation><xs:documentation>Western longitude bound in degrees</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="BoundingBoxType">
+    <xs:annotation><xs:documentation>Pixel bounding box for a detection</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="PixelX" type="xs:int">
+        <xs:annotation><xs:documentation>X pixel coordinate of top-left corner</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="PixelY" type="xs:int">
+        <xs:annotation><xs:documentation>Y pixel coordinate of top-left corner</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="WidthPx" type="xs:int">
+        <xs:annotation><xs:documentation>Width of bounding box in pixels</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="HeightPx" type="xs:int">
+        <xs:annotation><xs:documentation>Height of bounding box in pixels</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DetectionType">
+    <xs:annotation><xs:documentation>A single ATR detection within an image</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="TargetClass" type="uci:TargetClassType">
+        <xs:annotation><xs:documentation>Classification of the detected target</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Confidence_pct" type="xs:float">
+        <xs:annotation><xs:documentation>Detection confidence percentage</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Latitude_deg" type="xs:double">
+        <xs:annotation><xs:documentation>Latitude of detection center</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Longitude_deg" type="xs:double">
+        <xs:annotation><xs:documentation>Longitude of detection center</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="BoundingBox" type="uci:BoundingBoxType">
+        <xs:annotation><xs:documentation>Pixel bounding box of the detection</xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ============================================================ -->
+  <!-- Message Elements                                               -->
+  <!-- ============================================================ -->
+
+  <!-- Requests -->
+
+  <xs:element name="ImageryCapabilityCommand">
+    <xs:annotation><xs:documentation>Command to configure and initiate an imagery collection capability</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CapabilityID" type="xs:string">
+          <xs:annotation><xs:documentation>Identifier for the imagery capability</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CommandState" type="uci:CommandStateType">
+          <xs:annotation><xs:documentation>Command state action</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="SensorMode" type="uci:SensorModeType">
+          <xs:annotation><xs:documentation>Sensor operating mode for this collection</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="Resolution_m" type="xs:float">
+          <xs:annotation><xs:documentation>Requested ground resolution in meters</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CollectionDuration_sec" type="xs:int">
+          <xs:annotation><xs:documentation>Duration of the collection in seconds</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="Target">
+          <xs:annotation><xs:documentation>Target specification</xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="PointTarget" type="uci:PointTargetType">
+                <xs:annotation><xs:documentation>Point target location</xs:documentation></xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SlewCommand">
+    <xs:annotation><xs:documentation>Command to slew the spacecraft to a target pointing vector</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="TargetPointingVector" type="uci:TargetPointingVectorType">
+          <xs:annotation><xs:documentation>Target pointing direction</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SensorActivateCommand">
+    <xs:annotation><xs:documentation>Command to activate a sensor for data collection</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CapabilityID" type="xs:string">
+          <xs:annotation><xs:documentation>Capability identifier for the sensor</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="IntegrationTime_ms" type="xs:int">
+          <xs:annotation><xs:documentation>Sensor integration time in milliseconds</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="GainMode" type="uci:GainModeType">
+          <xs:annotation><xs:documentation>Sensor gain mode setting</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="StatusRequest">
+    <xs:annotation><xs:documentation>Request for status information from a target service</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="TargetServiceID" type="xs:string">
+          <xs:annotation><xs:documentation>Service ID to query status from</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="PowerModeCommand">
+    <xs:annotation><xs:documentation>Command to change the power state of a target service</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="TargetServiceID" type="xs:string">
+          <xs:annotation><xs:documentation>Service ID to change power state</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PowerState" type="uci:PowerStateType">
+          <xs:annotation><xs:documentation>Desired power state</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SensorCalibrationCommand">
+    <xs:annotation><xs:documentation>Command to initiate sensor calibration</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CapabilityID" type="xs:string">
+          <xs:annotation><xs:documentation>Capability identifier for the sensor to calibrate</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CalibrationMode" type="uci:CalibrationModeType">
+          <xs:annotation><xs:documentation>Type of calibration to perform</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Plans -->
+
+  <xs:element name="MissionPlan">
+    <xs:annotation><xs:documentation>A sequenced mission plan containing ordered execution steps</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PlanID" type="uci:UUIDType">
+          <xs:annotation><xs:documentation>Unique plan identifier</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PlanName" type="xs:string">
+          <xs:annotation><xs:documentation>Human-readable plan name</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ScheduledStartTime" type="uci:UTCDateTimeType">
+          <xs:annotation><xs:documentation>Planned start time for execution</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="Steps">
+          <xs:annotation><xs:documentation>Ordered list of plan execution steps</xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Step" type="uci:PlanStepType" maxOccurs="unbounded">
+                <xs:annotation><xs:documentation>A single plan step</xs:documentation></xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Reports / Status -->
+
+  <xs:element name="ImageryReport">
+    <xs:annotation><xs:documentation>Report on the result of an imagery collection</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ImageryStatus" type="uci:ImageryStatusType">
+          <xs:annotation><xs:documentation>Overall status of the imagery collection</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CompletionCode" type="uci:CompletionCodeType">
+          <xs:annotation><xs:documentation>Detailed completion reason code</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ImageMetadata" type="uci:ImageMetadataType" minOccurs="0">
+          <xs:annotation><xs:documentation>Image product metadata (present when imagery is completed)</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SensorStatusReport">
+    <xs:annotation><xs:documentation>Status report from a sensor service</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ServiceID" type="xs:string">
+          <xs:annotation><xs:documentation>Identifier of the reporting service</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="OperationalState" type="uci:OperationalStateType">
+          <xs:annotation><xs:documentation>Current operational state of the sensor</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="TemperatureC" type="xs:float">
+          <xs:annotation><xs:documentation>Sensor temperature in degrees Celsius</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FocalPlaneTemp_C" type="xs:float">
+          <xs:annotation><xs:documentation>Focal plane temperature in degrees Celsius</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="LastCalibrationTime" type="uci:UTCDateTimeType">
+          <xs:annotation><xs:documentation>Timestamp of last calibration</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FaultCode" type="xs:string" minOccurs="0">
+          <xs:annotation><xs:documentation>Active fault code if any</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="AttitudeStatusReport">
+    <xs:annotation><xs:documentation>Attitude determination and control status report</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PointingMode" type="uci:PointingModeType">
+          <xs:annotation><xs:documentation>Current pointing mode</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PointingError_deg" type="xs:float">
+          <xs:annotation><xs:documentation>Current pointing error in degrees</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="QuaternionW" type="xs:float">
+          <xs:annotation><xs:documentation>Quaternion W component</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="QuaternionX" type="xs:float">
+          <xs:annotation><xs:documentation>Quaternion X component</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="QuaternionY" type="xs:float">
+          <xs:annotation><xs:documentation>Quaternion Y component</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="QuaternionZ" type="xs:float">
+          <xs:annotation><xs:documentation>Quaternion Z component</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="AngularRate_degps" type="xs:float">
+          <xs:annotation><xs:documentation>Angular rate in degrees per second</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="PowerStatusReport">
+    <xs:annotation><xs:documentation>Electrical power system status report</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="BatterySOC_pct" type="xs:float">
+          <xs:annotation><xs:documentation>Battery state of charge percentage</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="SolarArrayPower_W" type="xs:float">
+          <xs:annotation><xs:documentation>Solar array output power in watts</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="TotalBusPower_W" type="xs:float">
+          <xs:annotation><xs:documentation>Total bus power consumption in watts</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="BusVoltage_V" type="xs:float">
+          <xs:annotation><xs:documentation>Bus voltage in volts</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PowerMode" type="uci:PowerModeType">
+          <xs:annotation><xs:documentation>Current EPS power mode</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ThermalStatusReport">
+    <xs:annotation><xs:documentation>Thermal subsystem status report</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ServiceID" type="xs:string">
+          <xs:annotation><xs:documentation>Identifier of the reporting service</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FocalPlaneTemp_C" type="xs:float">
+          <xs:annotation><xs:documentation>Focal plane temperature in degrees Celsius</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ElectronicsTemp_C" type="xs:float">
+          <xs:annotation><xs:documentation>Electronics temperature in degrees Celsius</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="StructureTemp_C" type="xs:float">
+          <xs:annotation><xs:documentation>Structure temperature in degrees Celsius</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ThermalMode" type="uci:ThermalModeType">
+          <xs:annotation><xs:documentation>Current thermal operating mode</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="FaultReport">
+    <xs:annotation><xs:documentation>Report of a fault condition detected by any service</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FaultCode" type="xs:string">
+          <xs:annotation><xs:documentation>Machine-readable fault identifier</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FaultSeverity" type="uci:FaultSeverityType">
+          <xs:annotation><xs:documentation>Severity level of the fault</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="AffectedServiceID" type="xs:string">
+          <xs:annotation><xs:documentation>Service affected by the fault</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FaultDescription" type="xs:string">
+          <xs:annotation><xs:documentation>Human-readable description of the fault</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="RecommendedAction" type="xs:string">
+          <xs:annotation><xs:documentation>Recommended corrective action</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="NavigationStatusReport">
+    <xs:annotation><xs:documentation>Navigation and orbit determination status report</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PositionECEF_x_m" type="xs:double">
+          <xs:annotation><xs:documentation>ECEF X position in meters</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PositionECEF_y_m" type="xs:double">
+          <xs:annotation><xs:documentation>ECEF Y position in meters</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PositionECEF_z_m" type="xs:double">
+          <xs:annotation><xs:documentation>ECEF Z position in meters</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="VelocityECEF_x_ms" type="xs:float">
+          <xs:annotation><xs:documentation>ECEF X velocity in m/s</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="VelocityECEF_y_ms" type="xs:float">
+          <xs:annotation><xs:documentation>ECEF Y velocity in m/s</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="VelocityECEF_z_ms" type="xs:float">
+          <xs:annotation><xs:documentation>ECEF Z velocity in m/s</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="Latitude_deg" type="xs:double">
+          <xs:annotation><xs:documentation>Geodetic latitude in degrees</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="Longitude_deg" type="xs:double">
+          <xs:annotation><xs:documentation>Geodetic longitude in degrees</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="Altitude_m" type="xs:float">
+          <xs:annotation><xs:documentation>Altitude above WGS84 ellipsoid in meters</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="OrbitalPeriod_sec" type="xs:float">
+          <xs:annotation><xs:documentation>Orbital period in seconds</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="EphemerisAge_sec" type="xs:float">
+          <xs:annotation><xs:documentation>Age of the current ephemeris in seconds</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="PlanStatusReport">
+    <xs:annotation><xs:documentation>Status report for a mission plan execution</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PlanID" type="uci:UUIDType">
+          <xs:annotation><xs:documentation>Identifier of the plan being reported on</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CurrentStepNumber" type="xs:int">
+          <xs:annotation><xs:documentation>Current step being executed</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="PlanState" type="uci:PlanStateType">
+          <xs:annotation><xs:documentation>Current plan execution state</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CompletedSteps" type="xs:int">
+          <xs:annotation><xs:documentation>Number of steps completed</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="TotalSteps" type="xs:int">
+          <xs:annotation><xs:documentation>Total number of steps in the plan</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="HeartbeatMessage">
+    <xs:annotation><xs:documentation>Periodic heartbeat message from a service</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ServiceID" type="xs:string">
+          <xs:annotation><xs:documentation>Identifier of the heartbeating service</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ServiceState" type="uci:ServiceStateType">
+          <xs:annotation><xs:documentation>Current state of the service</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="UptimeSeconds" type="xs:int">
+          <xs:annotation><xs:documentation>Service uptime in seconds</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Metadata -->
+
+  <xs:element name="ImageMetadataRecord">
+    <xs:annotation><xs:documentation>Extended image metadata record including collection geometry</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="SensorID" type="xs:string">
+          <xs:annotation><xs:documentation>Identifier of the collecting sensor</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FileLocation" type="xs:string">
+          <xs:annotation><xs:documentation>Storage location of the image file</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="FileFormat" type="xs:string" fixed="NITF_2.1">
+          <xs:annotation><xs:documentation>Image file format</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CloudCoverPercentage" type="uci:PercentageType">
+          <xs:annotation><xs:documentation>Cloud cover percentage</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="QualityRating" type="uci:NIIRSType">
+          <xs:annotation><xs:documentation>NIIRS quality rating</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="GSD_m" type="xs:float">
+          <xs:annotation><xs:documentation>Ground sample distance in meters</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CollectionStartTime" type="uci:UTCDateTimeType">
+          <xs:annotation><xs:documentation>Collection start time</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CollectionEndTime" type="uci:UTCDateTimeType">
+          <xs:annotation><xs:documentation>Collection end time</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="CollectionGeometry" type="uci:CollectionGeometryType">
+          <xs:annotation><xs:documentation>Geometry of the collection</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="GroundCoverBounds" type="uci:GroundCoverBoundsType">
+          <xs:annotation><xs:documentation>Geographic bounding box of the image</xs:documentation></xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ATR Target Detection -->
+
+  <xs:element name="TargetDetectionReport">
+    <xs:annotation><xs:documentation>ATR target detection report with classified detections</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" type="uci:HeaderType">
+          <xs:annotation><xs:documentation>UCI message header</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="ReferenceImageID" type="xs:string">
+          <xs:annotation><xs:documentation>Reference to the source imagery report message ID</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="DetectionCount" type="xs:int">
+          <xs:annotation><xs:documentation>Number of detections in this report</xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:element name="Detections" minOccurs="0">
+          <xs:annotation><xs:documentation>List of individual detections</xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Detection" type="uci:DetectionType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation><xs:documentation>A single detection</xs:documentation></xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

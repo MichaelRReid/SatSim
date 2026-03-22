@@ -1,0 +1,2 @@
+[console_scripts]
+satsim-console = cli.console:main

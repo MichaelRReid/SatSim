@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do touch:*)",
+      "Bash(done)",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(python -c \":*)",
+      "Bash(echo \"status:*)",
+      "Bash(python -m satsim)",
+      "Bash(echo \"task 39.7392 -104.9903 --mode INFRARED_LONG_WAVE --res 1.0 --dur 45:*)",
+      "Bash(echo \"scenario run sensor_fault_injection:*)",
+      "Bash(python -m satsim --task --lat 39.7392 --lon -104.9903 --mode INFRARED_LONG_WAVE --res 1.0 --dur 45)",
+      "Bash(python -m satsim --scenario --run basic_imagery_tasking)",
+      "Bash(python -m satsim --run basic_imagery_tasking)",
+      "Bash(python -m satsim --json)",
+      "Bash(python -c \"from lxml import etree; etree.XMLSchema\\(etree.parse\\(''schemas/uci_v6.xsd''\\)\\); print\\(''XSD loaded successfully''\\)\")"
+    ]
+  }
+}
